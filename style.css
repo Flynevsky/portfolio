@@ -250,3 +250,8 @@ html::-webkit-scrollbar {
     height:auto;
     border-radius: 2vw;
 }
+.photo_case_big_with_title {
+    width:25vw;
+    height:auto;
+    border-radius: 2vw;
+}
