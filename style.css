@@ -16,7 +16,7 @@
 }
 body {
     background: url("ressources/background.JPEG");
-    background-size: 100%;
+    background-size: 100vw;
     background-repeat: repeat;
     font-family: helvetica;
 	color: #ffffff;
