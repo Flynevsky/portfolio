@@ -49,6 +49,7 @@ html::-webkit-scrollbar {
     font-family: helvetica;
     position: relative;
     left: 20%;
+    width:70vw;
 }
 #p1 {
     text-align: left;
@@ -58,15 +59,31 @@ html::-webkit-scrollbar {
     left: 20%;
     line-height: 1.3vw;
 }
+.section_end
+{
+	height: 8vw;
+    background-color: #554343;
+	width: 100%;
+    position: relative;
+    top:16vw;
+	margin: -4vw 0px -4vw 0px;
+	-webkit-transform: rotate(-2deg) scale(1.2, 1);
+	-ms-transform: rotate(-2deg) scale(1.2, 1);
+	transform: rotate(-2deg) scale(1.2, 1);
+    z-index: -1;
+}
 #p2 {
     font-family: helvetica;
     font-size:1vw;
-    background: url("ressources/background_pg2.png");
+    background: #554343;
     background-size: 100vw;
     background-repeat: no-repeat;
     position: relative;
     top:19vw;
     line-height: 1.7vw;
+    margin-left: -4vw;
+    margin-right: -4vw;
+    z-index: 0;
 }
 #p2_2 {
     font-family: helvetica;
@@ -77,20 +94,7 @@ html::-webkit-scrollbar {
     overflow: hidden;
     top: 5;
 }
-#p2_2::before {
-    content: "";
-    background: url("ressources/background_pg2.png");
-    background-size: 100vw;
-    background-repeat: no-repeat;
-    display: block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    transform: rotateX(180deg);
-    transform: rotateZ(180deg);
-}
+
 #p2_1 {
     font-family: helvetica;
     font-size:1vw;
