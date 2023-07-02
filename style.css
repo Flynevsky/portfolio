@@ -1,15 +1,15 @@
 #home {
 	left:1%;
     top:1vw;
-	width: 3vw;
+	width: 5vw;
 	height: auto;
 	position: fixed;
     z-index: 1;
 }
 #back {
 	left:1%;
-    top:5vw;
-	width: 3vw;
+    top:7vw;
+	width: 5vw;
 	height: auto;
 	position: fixed;
     z-index: 1;
@@ -54,18 +54,21 @@ html::-webkit-scrollbar {
 #p1 {
     text-align: left;
     font-family: helvetica;
+    font-size:1.3vw;
     position: relative;
     top:9.7vw;
     left: 20%;
     line-height: 1.3vw;
+    width: 24.5vw;
+    margin-top: 0.5vw;
 }
 .section_end
 {
 	height: 8vw;
     background-color: #554343;
-	width: 100%;
     position: relative;
-    top:16vw;
+    top:16.1vw;
+    right: 8.4vw;
 	margin: -4vw 0px -4vw 0px;
 	-webkit-transform: rotate(-2deg) scale(1.2, 1);
 	-ms-transform: rotate(-2deg) scale(1.2, 1);
@@ -76,13 +79,11 @@ html::-webkit-scrollbar {
     font-family: helvetica;
     font-size:1vw;
     background: #554343;
-    background-size: 100vw;
-    background-repeat: no-repeat;
     position: relative;
     top:19vw;
     line-height: 1.7vw;
-    margin-left: -4vw;
-    margin-right: -4vw;
+    left: -4vw;
+    width:104vw;
     z-index: 0;
 }
 #p2_2 {
