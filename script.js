@@ -16,11 +16,10 @@ function onmouseout0(id) {
     if(el) el.style.transform = "scale(1.0)";
 }
 
-// --- 1. CHARGEMENT DES "BOX" (GESTION DES 3 TYPES DE CLASSES) ---
+// --- 1. CHARGEMENT DES BOX (Catégories) ---
 async function loadMainCategories(parentCat) {
     const list = document.getElementById('galleries-list');
     if (!list) return;
-
     list.innerHTML = ''; 
 
     try {
@@ -34,33 +33,21 @@ async function loadMainCategories(parentCat) {
         if (data && data.length > 0) {
             data.forEach((gal, index) => {
                 const id = `gal_${index}`;
-                
-                // --- LOGIQUE DE LIEN ---
-                // Ces catégories ouvrent l'image HD directement
                 const isDirect = ['rewind', 'best_ones', 'spotting_best', 'spotting_ksp'].includes(parentCat);
-                
                 const isInsideHtmlFolder = window.location.pathname.includes('/html/');
                 const galleryPath = isInsideHtmlFolder ? 'gallery.html' : 'html/gallery.html';
                 const targetLink = isDirect ? gal.hd_url : `${galleryPath}?cat=${gal.parent_category}&year=${encodeURIComponent(gal.year)}`;
 
-                // --- LOGIQUE D'AFFICHAGE (LES 3 TYPES) ---
                 let caseContent = "";
-
-                // Liste des catégories qui utilisent la GRANDE image avec titre (Spotting + Best/Rewind)
-                const useBigStyle = [
-                    'spotting_year', 'spotting_airline', 'spotting_aircraft', 
-                    'rewind', 'best_ones', 'spotting_best', 'spotting_ksp'
-                ].includes(parentCat);
+                const useBigStyle = ['spotting_year', 'spotting_airline', 'spotting_aircraft', 'rewind', 'best_ones', 'spotting_best', 'spotting_ksp'].includes(parentCat);
 
                 if (useBigStyle) {
-                    // TYPE : Titre + Image Large (photo_case_big_with_title)
+                    // STYLE BIG (Titre + Image large)
                     caseContent = `
                         <br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/>
                         <img src="${gal.thumbnail_url}" class="photo_case_big_with_title"/>`;
-                } 
-                else {
-                    // TYPE : Titre + Sous-titre + Image Standard (photo_case)
-                    // (Utilisé pour Deep Sky, Moon, Planetary)
+                } else {
+                    // STYLE STANDARD (Titre + Sous-titre + Image)
                     caseContent = `
                         <br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/>
                         <span style="font-size:1vw;color:#a45656;">${gal.description || ''}</span><br/>
@@ -80,41 +67,32 @@ async function loadMainCategories(parentCat) {
             list.innerHTML = `<td style="color:#666; padding:50px; text-align:center; width:100vw;">No archives found for ${parentCat}.</td>`;
         }
     } catch (err) {
-        console.error(err);
         list.innerHTML = `<td style="color:red; text-align:center; width:100vw;">Connection error.</td>`;
     }
 }
 
-// --- 2. CHARGEMENT DES PHOTOS D'UNE GALERIE ---
+// --- 2. CHARGEMENT DES PHOTOS (Galerie unique) ---
 async function loadGallery(type, boxName) {
     const row = document.getElementById('gallery-row');
     if (!row) return;
-
     row.innerHTML = ''; 
 
     try {
         let query = window.supabaseClient.from('portfolio').select('*');
-
-        if (type === 'spotting_airline') {
-            query = query.eq('airline', boxName);
-        } else if (type === 'spotting_aircraft') {
-            query = query.eq('model_global', boxName);
-        } else if (type === 'spotting_year') {
-            query = query.eq('date', boxName).eq('categorie', 'spotting');
-        } else {
-            query = query.eq('sous_categorie', type).eq('date', boxName);
-        }
+        if (type === 'spotting_airline') query = query.eq('airline', boxName);
+        else if (type === 'spotting_aircraft') query = query.eq('model_global', boxName);
+        else if (type === 'spotting_year') query = query.eq('date', boxName).eq('categorie', 'spotting');
+        else query = query.eq('sous_categorie', type).eq('date', boxName);
 
         const { data, error } = await query;
         if (error) throw error;
 
         if (data && data.length > 0) {
             data.forEach((item, index) => {
-                const imgId = `img_${index}`;
                 row.innerHTML += `
                     <th>
                         <a href="${item.image_url_hd}">
-                            <img src="${item.image_url}" id="${imgId}" class="case1" onmouseover="onmouseover0(this.id)" onmouseout="onmouseout0(this.id)" />
+                            <img src="${item.image_url}" id="img_${index}" class="case1" onmouseover="onmouseover0(this.id)" onmouseout="onmouseout0(this.id)" />
                         </a>
                     </th>`;
             });
@@ -122,17 +100,13 @@ async function loadGallery(type, boxName) {
             row.innerHTML = `<td style="color:#666; padding:50px; text-align:center; width:100vw;">No photos found.</td>`;
         }
     } catch (err) {
-        console.error(err);
         row.innerHTML = `<td style="color:red; text-align:center; width:100vw;">Error loading images.</td>`;
     }
 }
 
-// --- INITIALISATION ---
 function initDynamicGallery() {
     const urlParams = new URLSearchParams(window.location.search);
     const cat = urlParams.get('cat');
     const year = urlParams.get('year');
-    if (cat && year) {
-        loadGallery(cat, year);
-    }
+    if (cat && year) loadGallery(cat, year);
 }

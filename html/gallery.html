@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../style.css" />
-    <link rel="icon" type="image/x-icon" href="icon.png" />
-    <title id="page-title">Gallery</title>
+    <link rel="icon" type="image/png" href="../ressources/icon.png?v=1" />
+    <title>Gallery</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -14,19 +13,13 @@
     
     <div id="p3_1">
         <table class="center">
-            <tr id="gallery-row">
-                <td style="text-align: center; font-size: 2vw; color: #f1b4b4; padding: 50px;">
-                    Scanning the stars...
-                </td>
-            </tr>
+            <tr id="gallery-row"></tr>
         </table>
     </div>
 
     <script src="../script.js"></script>
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            initDynamicGallery();
-        });
+        window.onload = () => initDynamicGallery();
     </script>
 </body>
 </html>
