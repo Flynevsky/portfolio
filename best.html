@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="ressources/icon.png" />
+    <title>Masterpieces</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* On force les boutons à ne pas occuper d'espace vertical */
+        .nav-btn { position: absolute; z-index: 10; }
+        #home { top: 1vw; left: 1%; }
+        #back { top: 7vw; left: 1%; }
+    </style>
+</head>
+<body style="margin: 0; padding: 0; background-attachment: fixed;">
+    
+    <a href="index.html" class="nav-btn"><img src="ressources/home.png" alt="Home" id="home" style="width: 5vw;"/></a>
+    <a href="photo.html" class="nav-btn"><img src="ressources/back.png" alt="Back" id="back" style="width: 5vw;"/></a>
+    
+    <div id="p3_1">
+        <table class="center">
+            <tr id="galleries-list">
+                </tr>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        window.onload = () => loadMainCategories('best_ones');
+    </script>
+</body>
+</html>

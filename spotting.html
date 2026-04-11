@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="ressources/icon.png" />
+    <title>Spotting - Hub</title>
+</head>
+<body>
+    <a href="index.html"><img src="ressources/home.png" alt="Home" id="home" /></a>
+    <a href="index.html"><img src="ressources/back.png" alt="go back" id="back" /></a>
+
+    <div class="gp1" style="top:10vw;">
+        <span style="font-size:5vw;color: #ffffff;">There,</span><br/>
+        <span style="font-size:3.3vw;color: #c1c1c1;">you can discover planes.</span><br/>
+    </div>
+
+    <div id="p3">
+        <table class="center">
+            <tr>
+                <th>
+                    <a href="spotting_list.html?type=spotting_year">
+                        <div onmouseover="onmouseover0(this.id)" onmouseout="onmouseout0(this.id)" class="case1" id="s1"><br/>
+                            <span style="font-size:2.5vw;color:#f1b4b4;">By Year</span><br/>
+                            <img src="ressources/spotting/year.jpg" class="photo_case_big_with_title"/>
+                        </div>
+                    </a>
+                </th>
+                <th>
+                    <a href="spotting_list.html?type=spotting_airline">
+                        <div onmouseover="onmouseover0(this.id)" onmouseout="onmouseout0(this.id)" class="case1" id="s2"><br/>
+                            <span style="font-size:2.5vw;color:#f1b4b4;">By Airline</span><br/>
+                            <img src="ressources/spotting/airline.jpg" class="photo_case_big_with_title"/>
+                        </div>
+                    </a>
+                </th>
+                <th>
+                    <a href="spotting_list.html?type=spotting_aircraft">
+                        <div onmouseover="onmouseover0(this.id)" onmouseout="onmouseout0(this.id)" class="case1" id="s3"><br/>
+                            <span style="font-size:2.5vw;color:#f1b4b4;">By Aircraft</span><br/>
+                            <img src="ressources/spotting/aircraft.jpg" class="photo_case_big_with_title"/>
+                        </div>
+                    </a>
+                </th>
+            </tr>
+            <tr>
+                <th>
+                    <a href="spotting_best.html">
+                        <div onmouseover="onmouseover0(this.id)" onmouseout="onmouseout0(this.id)" class="case1" id="s4"><br/>
+                            <span style="font-size:2.5vw;color:#f1b4b4;">Best Ones</span><br/>
+                            <img src="ressources/spotting/best.jpg" class="photo_case_big_with_title"/>
+                        </div>
+                    </a>
+                </th>
+            </tr>
+        </table>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

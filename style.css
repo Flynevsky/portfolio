@@ -1,15 +1,15 @@
 #home {
 	left:1%;
-    top:1vw;
-	width: 5vw;
+    top:1%;
+	width: clamp(80px,5%,1000px);
 	height: auto;
 	position: fixed;
     z-index: 1;
 }
 #back {
 	left:1%;
-    top:7vw;
-	width: 5vw;
+    top:12%;
+	width: clamp(80px,5%,1000px);
 	height: auto;
 	position: fixed;
     z-index: 1;
@@ -48,8 +48,9 @@ html::-webkit-scrollbar {
     text-align: left;
     font-family: helvetica;
     position: relative;
+    line-height: 170%;
     left: 20%;
-    width:70vw;
+    width:70%;
 }
 #p1 {
     text-align: left;
@@ -58,7 +59,7 @@ html::-webkit-scrollbar {
     top:9.7vw;
     left: 20%;
     line-height: 1.3vw;
-    width: 24.5vw;
+    width: 70vw;
     margin-top: 0.5vw;
 }
 .section_end
@@ -76,7 +77,8 @@ html::-webkit-scrollbar {
 }
 #p2 {
     font-family: helvetica;
-    font-size:1vw;
+    font-size:130%;
+    line-height: 100%;
     background: #554343;
     position: relative;
     top:19vw;
@@ -103,7 +105,8 @@ html::-webkit-scrollbar {
     line-height: 1.7vw;
 }
 #t1 {
-    font-size:2vw;
+    line-height: 100%;
+    font-size:200%;
     font-weight: bold;
     color: #c7a3a3;
     text-align: left;
@@ -254,8 +257,13 @@ html::-webkit-scrollbar {
     height:auto;
     border-radius: 2vw;
 }
+
 .photo_case_big_with_title {
-    width:25vw;
-    height:auto;
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%); 
+    width: 25vw;
+    height: auto;
     border-radius: 2vw;
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="ressources/icon.png" />
+    <title>Best of Spotting</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="margin:0; padding:0;">
+    <a href="index.html"><img src="ressources/home.png" alt="Home" id="home" style="position:fixed; top:1vw; left:1%; width:5vw; z-index:10;"/></a>
+    <a href="spotting.html"><img src="ressources/back.png" alt="Back" id="back" style="position:fixed; top:7vw; left:1%; width:5vw; z-index:10;"/></a>
+    
+    <div id="p3_1">
+        <table class="center">
+            <tr id="galleries-list">
+                </tr>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        window.onload = () => loadMainCategories('spotting_best');
+    </script>
+</body>
+</html>
