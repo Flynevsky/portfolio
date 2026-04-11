@@ -48,7 +48,6 @@ html::-webkit-scrollbar {
     text-align: left;
     font-family: helvetica;
     position: relative;
-    line-height: 170%;
     left: 20%;
     width:70%;
 }
