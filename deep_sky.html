@@ -18,15 +18,16 @@
 
     <div id="p3">
         <table class="center">
-            <tr id="galleries-list">
-                <td style="color: #f1b4b4; font-size: 2vw;">Loading galaxies...</td>
-            </tr>
+            <tbody id="galleries-list">
+                <tr>
+                    <td style="color: #f1b4b4; font-size: 2vw; text-align: center; padding: 50px;">Loading galaxies...</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
     <script src="script.js"></script>
     <script>
-        // On charge les galeries pour la catégorie "deep_sky"
         window.onload = () => loadMainCategories('deep_sky');
     </script>
 </body>

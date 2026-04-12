@@ -31,51 +31,60 @@ async function loadMainCategories(parentCat) {
         if (error) throw error;
 
         if (data && data.length > 0) {
+            let htmlContent = "<tr>"; // On ouvre la première ligne du tableau
+
             data.forEach((gal, index) => {
+                // Si on a déjà mis 3 éléments, on passe à la ligne suivante
+                if (index > 0 && index % 3 === 0) {
+                    htmlContent += "</tr><tr>";
+                }
+
                 const id = `gal_${index}`;
-                const isDirect = ['rewind', 'best_ones', 'spotting_best', 'spotting_ksp'].includes(parentCat);
+                const isDirect = ['rewind', 'best_ones', 'spotting_best'].includes(parentCat);
                 const isInsideHtmlFolder = window.location.pathname.includes('/html/');
                 const galleryPath = isInsideHtmlFolder ? 'gallery.html' : 'html/gallery.html';
                 const targetLink = isDirect ? gal.hd_url : `${galleryPath}?cat=${gal.parent_category}&year=${encodeURIComponent(gal.year)}`;
 
                 let caseContent = "";
-                const useBigStyle = ['spotting_year', 'spotting_airline', 'spotting_aircraft', 'rewind', 'best_ones', 'spotting_best', 'spotting_ksp'].includes(parentCat);
+                const useBigStyle = ['spotting_year', 'spotting_airline', 'spotting_aircraft', 'rewind', 'best_ones', 'spotting_best'].includes(parentCat);
 
                 if (useBigStyle) {
-                    // STYLE BIG (Titre + Image large)
                     caseContent = `
-                        <br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/>
+                        <br/>
+                        <span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/>
                         <img src="${gal.thumbnail_url}" class="photo_case_big_with_title"/>`;
                 } else {
-                    // STYLE STANDARD (Titre + Sous-titre + Image)
+                    // TON CODE EXACT DE BASE
                     caseContent = `
-                        <br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/>
+                        <br/>
+                        <span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/>
                         <span style="font-size:1vw;color:#a45656;">${gal.description || ''}</span><br/>
                         <img src="${gal.thumbnail_url}" class="photo_case"/>`;
                 }
 
-                list.innerHTML += `
+                htmlContent += `
                     <th>
                         <a href="${targetLink}">
-                            <div onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" class="case1" id="${id}">
+                            <p onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" class="case1" id="${id}">
                                 ${caseContent}
-                            </div>
+                            </p>
                         </a>
                     </th>`;
             });
+
+            htmlContent += "</tr>"; // On ferme la dernière ligne
+            list.innerHTML = htmlContent;
         } else {
-            list.innerHTML = `<td style="color:#666; padding:50px; text-align:center; width:100vw;">No archives found for ${parentCat}.</td>`;
+            list.innerHTML = `<tr><td style="color: #f1b4b4; font-size: 2vw; text-align: center; padding: 50px;">No archives found.</td></tr>`;
         }
-    } catch (err) {
-        list.innerHTML = `<td style="color:red; text-align:center; width:100vw;">Connection error.</td>`;
-    }
+    } catch (err) { console.error(err); }
 }
 
 // --- 2. CHARGEMENT DES PHOTOS (Galerie unique) ---
 async function loadGallery(type, boxName) {
-    const row = document.getElementById('gallery-row');
-    if (!row) return;
-    row.innerHTML = ''; 
+    const list = document.getElementById('gallery-row');
+    if (!list) return;
+    list.innerHTML = ''; 
 
     try {
         let query = window.supabaseClient.from('portfolio').select('*');
@@ -88,20 +97,29 @@ async function loadGallery(type, boxName) {
         if (error) throw error;
 
         if (data && data.length > 0) {
+            let htmlContent = "<tr>"; // On ouvre la première ligne
+
             data.forEach((item, index) => {
-                row.innerHTML += `
+                // Retour à la ligne tous les 3 éléments
+                if (index > 0 && index % 3 === 0) {
+                    htmlContent += "</tr><tr>";
+                }
+
+                const id = `img_${index}`;
+                htmlContent += `
                     <th>
                         <a href="${item.image_url_hd}">
-                            <img src="${item.image_url}" id="img_${index}" class="case1" onmouseover="onmouseover0(this.id)" onmouseout="onmouseout0(this.id)" />
+                            <img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit: cover;" />
                         </a>
                     </th>`;
             });
+
+            htmlContent += "</tr>"; // On ferme la dernière ligne
+            list.innerHTML = htmlContent;
         } else {
-            row.innerHTML = `<td style="color:#666; padding:50px; text-align:center; width:100vw;">No photos found.</td>`;
+            list.innerHTML = `<tr><td style="color: #f1b4b4; font-size: 2vw; text-align: center; padding: 50px;">No photos found.</td></tr>`;
         }
-    } catch (err) {
-        row.innerHTML = `<td style="color:red; text-align:center; width:100vw;">Error loading images.</td>`;
-    }
+    } catch (err) { console.error(err); }
 }
 
 function initDynamicGallery() {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="style.css" />
-    <link rel="icon" type="image/x-icon" href="ressources/icon.png" />
+    <link rel="icon" type="image/png" href="ressources/icon.png?v=1" />
     <title>Planetary</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -18,15 +18,16 @@
 
     <div id="p3">
         <table class="center">
-            <tr id="galleries-list">
-                <td style="color: #f1b4b4; font-size: 2vw; text-align: center; padding: 50px;">Loading planets...</td>
-            </tr>
+            <tbody id="galleries-list">
+                <tr>
+                    <td style="color: #f1b4b4; font-size: 2vw; text-align: center; padding: 50px;">Loading planets...</td>
+                </tr>
+            </tbody>
         </table>
     </div>
 
     <script src="script.js"></script>
     <script>
-        // Correction de l'identifiant : 'planetary' au lieu de 'plant'
         window.onload = () => loadMainCategories('planetary');
     </script>
 </body>
