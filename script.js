@@ -14,17 +14,18 @@ async function loadMainCategories(parentCat) {
     try {
         let query = sb.from('galleries').select('*').eq('parent_category', parentCat);
 
+        // TRI DES BOÎTES (CASES)
         if (parentCat === 'spotting_year') {
-            // Années : Ordre Chronologique (2026, 2025, 2024...)
-            query = query.order('year', { ascending: false });
+            // Années Spotting : Ordre Chronologique (2024, 2025, 2026...)
+            query = query.order('year', { ascending: true });
         } else if (parentCat === 'spotting_aircraft') {
-            // Aircraft : Par Manufacturer (A-Z) puis par Nom d'avion (A-Z)
+            // Aircraft : Par Constructeur puis par Modèle
             query = query.order('manufacturer', { ascending: true }).order('year', { ascending: true });
         } else if (parentCat === 'spotting_airline') {
-            // Airline : Par Nom (A-Z)
+            // Airline : Ordre Alphabétique
             query = query.order('year', { ascending: true });
         } else {
-            // Astro, Rewind, Best Ones : Ordre de création
+            // Astro, Rewind, Best : Ordre de création (ID)
             query = query.order('id', { ascending: true });
         }
 
@@ -43,7 +44,7 @@ async function loadMainCategories(parentCat) {
 
                 let inner = "";
                 if (['spotting_year', 'spotting_airline', 'spotting_aircraft', 'rewind', 'best_ones', 'spotting_best'].includes(parentCat)) {
-                    inner = `<br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/><img src="${gal.thumbnail_url}" class="photo_case_big_with_title"/>`;
+                    inner = `<br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/><img src="${gal.thumbnail_url}" class="photo_case_big_with_title" loading="lazy"/>`;
                 } else {
                     inner = `<br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/><span style="font-size:1vw;color:#a45656;">${gal.description || ''}</span><br/><img src="${gal.thumbnail_url}" class="photo_case"/>`;
                 }
@@ -77,7 +78,6 @@ async function loadGallery(type, boxName) {
             query = query.eq('sous_categorie', type).eq('date', boxName);
         }
 
-        // Tri de base par ordre d'ajout
         query = query.order('id', { ascending: true });
 
         const { data, error } = await query;
@@ -85,22 +85,18 @@ async function loadGallery(type, boxName) {
 
         let finalData = data || [];
 
-        // TRI INTELLIGENT JAVASCRIPT POUR LES DATES (Seulement pour By Year)
+        // TRI CHRONOLOGIQUE DES SESSIONS DANS LA GALERIE (Janvier -> Décembre)
         if (type === 'spotting_year' && finalData.length > 0) {
             finalData.sort((a, b) => {
-                // Fonction pour transformer "DD/MM/YYYY" en vraie date analysable
                 const parseDate = (dateStr) => {
                     if (!dateStr) return 0;
                     const parts = dateStr.split('/');
                     if (parts.length === 3) return new Date(parts[2], parts[1] - 1, parts[0]).getTime();
                     return 0;
                 };
-                
                 const timeA = parseDate(a.spotting_date || a.date);
                 const timeB = parseDate(b.spotting_date || b.date);
-                
-                if (timeA !== timeB) return timeA - timeB; // Tri chronologique (plus vieux au plus récent dans l'année)
-                return a.id - b.id; // Si même jour, on trie par ordre d'ajout (ID)
+                return timeA !== timeB ? timeA - timeB : a.id - b.id;
             });
         }
 
@@ -112,7 +108,7 @@ async function loadGallery(type, boxName) {
                 const exactDate = item.date || item.spotting_date;
                 const clickAction = isCarouselCat ? `onclick="openLightbox('${item.registration}', '${exactDate}')"` : `onclick="window.location.href='${item.image_url_hd}'"`;
                 
-                html += `<th><div ${clickAction} style="cursor:pointer;"><img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;"/></div></th>`;
+                html += `<th><div ${clickAction} style="cursor:pointer;"><img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/></div></th>`;
             });
             row.innerHTML = html + "</tr>";
         } else {
@@ -128,7 +124,7 @@ async function openLightbox(reg, exact_date) {
         .select('image_url_hd')
         .eq('registration', reg)
         .eq('date', exact_date)
-        .order('id', { ascending: true }); // Le carrousel est toujours trié par ordre d'ajout
+        .order('id', { ascending: true });
     
     if (error || !data.length) return;
     currentPhotos = data.map(p => p.image_url_hd);
@@ -145,9 +141,10 @@ function renderLightbox() {
         document.body.appendChild(modal);
     }
     
+    const hdUrl = currentPhotos[currentIndex];
     modal.innerHTML = `
         <span onclick="this.parentElement.remove()" style="position:absolute;top:20px;right:40px;color:white;font-size:50px;cursor:pointer;font-family:helvetica;z-index:10001;">&times;</span>
-        <img src="${currentPhotos[currentIndex]}" onclick="window.location.href='${currentPhotos[currentIndex]}'" style="max-width:90%;max-height:80%;border:2px solid #f1b4b4;border-radius:10px;object-fit:contain;cursor:pointer;" title="Cliquez pour ouvrir la photo en HD">
+        <img src="${hdUrl}" onclick="window.location.href='${hdUrl}'" style="max-width:90%;max-height:80%;border:2px solid #f1b4b4;border-radius:10px;object-fit:contain;cursor:pointer;">
         <div style="margin-top:20px;display:flex;gap:30px;align-items:center;">
             <button onclick="changeImg(-1)" style="background:#a45656;color:white;border:none;padding:15px 25px;cursor:pointer;border-radius:5px;font-family:helvetica;font-weight:bold;">PREV</button>
             <span style="color:white;font-family:helvetica;font-size:1.5vw;">${currentIndex + 1} / ${currentPhotos.length}</span>
@@ -157,9 +154,7 @@ function renderLightbox() {
 }
 
 function changeImg(s) {
-    currentIndex += s;
-    if (currentIndex < 0) currentIndex = currentPhotos.length - 1;
-    if (currentIndex >= currentPhotos.length) currentIndex = 0;
+    currentIndex = (currentIndex + s + currentPhotos.length) % currentPhotos.length;
     renderLightbox();
 }
 
