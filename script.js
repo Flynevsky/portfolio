@@ -21,11 +21,11 @@ async function loadMainCategories(parentCat) {
         } else if (parentCat === 'spotting_aircraft') {
             // Aircraft : Par Constructeur puis par Modèle
             query = query.order('manufacturer', { ascending: true }).order('year', { ascending: true });
-        } else if (parentCat === 'spotting_airline') {
-            // Airline : Ordre Alphabétique
+        } else if (parentCat === 'spotting_airline' || parentCat === 'spotting_best') {
+            // Airline & Best Spotting : Ordre Alphabétique (A-Z)
             query = query.order('year', { ascending: true });
         } else {
-            // Astro, Rewind, Best : Ordre de création (ID)
+            // Astro, Rewind : Ordre de création (ID)
             query = query.order('id', { ascending: true });
         }
 
