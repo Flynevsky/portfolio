@@ -14,27 +14,34 @@ async function loadMainCategories(parentCat) {
     try {
         let query = sb.from('galleries').select('*').eq('parent_category', parentCat);
 
-        // TRI DES BOÎTES (CASES)
+        // TRI DE BASE
         if (parentCat === 'spotting_year') {
-            // Années Spotting : Ordre Chronologique (2024, 2025, 2026...)
             query = query.order('year', { ascending: true });
         } else if (parentCat === 'spotting_aircraft') {
-            // Aircraft : Par Constructeur puis par Modèle
             query = query.order('manufacturer', { ascending: true }).order('year', { ascending: true });
-        } else if (parentCat === 'spotting_airline' || parentCat === 'spotting_best') {
-            // Airline & Best Spotting : Ordre Alphabétique (A-Z)
+        } else if (parentCat === 'spotting_airline') {
             query = query.order('year', { ascending: true });
         } else {
-            // Astro, Rewind : Ordre de création (ID)
             query = query.order('id', { ascending: true });
         }
 
         const { data, error } = await query;
         if (error) throw error;
 
-        if (data && data.length > 0) {
+        let finalData = data || [];
+
+        // TRI ALPHABÉTIQUE NATUREL POUR SPOTTING_BEST (A-Z, insensible à la casse et aux chiffres)
+        if (parentCat === 'spotting_best' && finalData.length > 0) {
+            finalData.sort((a, b) => {
+                const nameA = String(a.year || '');
+                const nameB = String(b.year || '');
+                return nameA.localeCompare(nameB, 'fr', { numeric: true, sensitivity: 'base' });
+            });
+        }
+
+        if (finalData.length > 0) {
             let html = "<tr>";
-            data.forEach((gal, i) => {
+            finalData.forEach((gal, i) => {
                 if (i > 0 && i % 3 === 0) html += "</tr><tr>";
                 const id = `gal_${i}`;
                 const isDirect = ['rewind', 'best_ones', 'spotting_best'].includes(parentCat);
