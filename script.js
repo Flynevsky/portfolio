@@ -14,8 +14,7 @@ async function loadMainCategories(parentCat) {
     try {
         let query = sb.from('galleries').select('*').eq('parent_category', parentCat);
 
-        // TRI DE BASE
-        if (parentCat === 'spotting_year') {
+        if (parentCat === 'spotting_year' || parentCat === 'eclipse') {
             query = query.order('year', { ascending: true });
         } else if (parentCat === 'spotting_aircraft') {
             query = query.order('manufacturer', { ascending: true }).order('year', { ascending: true });
@@ -30,7 +29,6 @@ async function loadMainCategories(parentCat) {
 
         let finalData = data || [];
 
-        // TRI ALPHABÉTIQUE NATUREL POUR SPOTTING_BEST (A-Z, insensible à la casse et aux chiffres)
         if (parentCat === 'spotting_best' && finalData.length > 0) {
             finalData.sort((a, b) => {
                 const nameA = String(a.year || '');
@@ -50,7 +48,7 @@ async function loadMainCategories(parentCat) {
                 const target = isDirect ? gal.hd_url : `${galleryPath}?cat=${gal.parent_category}&year=${encodeURIComponent(gal.year)}`;
 
                 let inner = "";
-                if (['spotting_year', 'spotting_airline', 'spotting_aircraft', 'rewind', 'best_ones', 'spotting_best'].includes(parentCat)) {
+                if (['spotting_year', 'spotting_airline', 'spotting_aircraft', 'rewind', 'best_ones', 'spotting_best', 'eclipse'].includes(parentCat)) {
                     inner = `<br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/><img src="${gal.thumbnail_url}" class="photo_case_big_with_title" loading="lazy"/>`;
                 } else {
                     inner = `<br/><span style="font-size:3vw;color:#f1b4b4;">${gal.year}</span><br/><span style="font-size:1vw;color:#a45656;">${gal.description || ''}</span><br/><img src="${gal.thumbnail_url}" class="photo_case"/>`;
@@ -72,13 +70,14 @@ async function loadGallery(type, boxName) {
 
     try {
         let query = sb.from('portfolio').select('*');
-        const isCarouselCat = ['spotting_year', 'spotting_airline', 'spotting_aircraft'].includes(type);
+        const isCarouselCat = ['spotting_year', 'spotting_airline', 'spotting_aircraft', 'eclipse'].includes(type);
         
         if (isCarouselCat) {
             query = query.eq('is_cover', true);
             if (type === 'spotting_year') query = query.ilike('date', `%${boxName}%`);
             else if (type === 'spotting_airline') query = query.ilike('airline', `%${boxName}%`);
             else if (type === 'spotting_aircraft') query = query.ilike('model_global', `%${boxName}%`);
+            else if (type === 'eclipse') query = query.eq('sous_categorie', 'eclipse').ilike('date', `%${boxName}%`);
         } else if (type === 'spotting_best') {
             query = query.ilike('date', `%${boxName}%`).eq('categorie', 'spotting');
         } else {
@@ -92,7 +91,6 @@ async function loadGallery(type, boxName) {
 
         let finalData = data || [];
 
-        // TRI CHRONOLOGIQUE DES SESSIONS DANS LA GALERIE (Janvier -> Décembre)
         if (type === 'spotting_year' && finalData.length > 0) {
             finalData.sort((a, b) => {
                 const parseDate = (dateStr) => {
