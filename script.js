@@ -74,10 +74,15 @@ async function loadGallery(type, boxName) {
         
         if (isCarouselCat) {
             query = query.eq('is_cover', true);
-            if (type === 'spotting_year') query = query.ilike('date', `%${boxName}%`);
-            else if (type === 'spotting_airline') query = query.ilike('airline', `%${boxName}%`);
-            else if (type === 'spotting_aircraft') query = query.ilike('model_global', `%${boxName}%`);
-            else if (type === 'eclipse') query = query.eq('sous_categorie', 'eclipse').ilike('date', `%${boxName}%`);
+            if (type === 'spotting_year') {
+                query = query.eq('categorie', 'spotting').ilike('date', `%${boxName}%`);
+            } else if (type === 'spotting_airline') {
+                query = query.eq('categorie', 'spotting').ilike('airline', `%${boxName}%`);
+            } else if (type === 'spotting_aircraft') {
+                query = query.eq('categorie', 'spotting').ilike('model_global', `%${boxName}%`);
+            } else if (type === 'eclipse') {
+                query = query.eq('sous_categorie', 'eclipse').ilike('date', `%${boxName}%`);
+            }
         } else if (type === 'spotting_best') {
             query = query.ilike('date', `%${boxName}%`).eq('categorie', 'spotting');
         } else {
@@ -114,9 +119,9 @@ async function loadGallery(type, boxName) {
                 const safeReg = (item.registration || '').replace(/'/g, "\\'");
                 const safeDate = (exactDate || '').replace(/'/g, "\\'");
 
-                if (isCarouselCat) {
-                    // Affichage sous forme de CASE AVEC TITRE + COVER IMAGE pour le carrousel
-                    const titleText = item.registration || item.model_global || item.airline || item.date || '';
+                if (type === 'eclipse') {
+                    // Pour l'Éclipse uniquement : case avec le nom au-dessus de l'image
+                    const titleText = item.registration || item.date || '';
                     html += `<th>
                         <div onclick="openLightbox('${safeReg}', '${safeDate}')" style="cursor:pointer;">
                             <p onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" class="case1" id="${id}">
@@ -125,9 +130,20 @@ async function loadGallery(type, boxName) {
                             </p>
                         </div>
                     </th>`;
+                } else if (isCarouselCat) {
+                    // Pour le Spotting (avions) : image seule (sans texte)
+                    html += `<th>
+                        <div onclick="openLightbox('${safeReg}', '${safeDate}')" style="cursor:pointer;">
+                            <img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/>
+                        </div>
+                    </th>`;
                 } else {
-                    // Affichage image directe
-                    html += `<th><div onclick="window.location.href='${item.image_url_hd}'" style="cursor:pointer;"><img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/></div></th>`;
+                    // Pour Astro classique : image directe vers HD
+                    html += `<th>
+                        <div onclick="window.location.href='${item.image_url_hd}'" style="cursor:pointer;">
+                            <img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/>
+                        </div>
+                    </th>`;
                 }
             });
             row.innerHTML = html + "</tr>";
