@@ -5,7 +5,7 @@ const sb = window.supabase.createClient(S_URL, S_KEY);
 function onmouseover0(id) { let el = document.getElementById(id); if(el) el.style.transform = "scale(1.1)"; }
 function onmouseout0(id) { let el = document.getElementById(id); if(el) el.style.transform = "scale(1.0)"; }
 
-// --- 1. CHARGEMENT DES CATÉGORIES ---
+// --- 1. CHARGEMENT DES CATÉGORIES (BOÎTES D'ACCUEIL / ANNÉES) ---
 async function loadMainCategories(parentCat) {
     const list = document.getElementById('galleries-list');
     if (!list) return;
@@ -62,7 +62,7 @@ async function loadMainCategories(parentCat) {
     } catch (e) { list.innerHTML = '<tr><td style="color:#f1b4b4;padding:50px;text-align:center;">Error loading.</td></tr>'; }
 }
 
-// --- 2. CHARGEMENT DES GALERIES ---
+// --- 2. CHARGEMENT DES GALERIES DANS GALLERY.HTML ---
 async function loadGallery(type, boxName) {
     const row = document.getElementById('gallery-row');
     if (!row) return;
@@ -111,9 +111,24 @@ async function loadGallery(type, boxName) {
                 if (i > 0 && i % 3 === 0) html += "</tr><tr>";
                 const id = `img_${i}`;
                 const exactDate = item.date || item.spotting_date;
-                const clickAction = isCarouselCat ? `onclick="openLightbox('${item.registration}', '${exactDate}')"` : `onclick="window.location.href='${item.image_url_hd}'"`;
-                
-                html += `<th><div ${clickAction} style="cursor:pointer;"><img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/></div></th>`;
+                const safeReg = (item.registration || '').replace(/'/g, "\\'");
+                const safeDate = (exactDate || '').replace(/'/g, "\\'");
+
+                if (isCarouselCat) {
+                    // Affichage sous forme de CASE AVEC TITRE + COVER IMAGE pour le carrousel
+                    const titleText = item.registration || item.model_global || item.airline || item.date || '';
+                    html += `<th>
+                        <div onclick="openLightbox('${safeReg}', '${safeDate}')" style="cursor:pointer;">
+                            <p onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" class="case1" id="${id}">
+                                <br/><span style="font-size:2.5vw;color:#f1b4b4;">${titleText}</span><br/>
+                                <img src="${item.image_url}" class="photo_case_big_with_title" style="object-fit:cover;" loading="lazy"/>
+                            </p>
+                        </div>
+                    </th>`;
+                } else {
+                    // Affichage image directe
+                    html += `<th><div onclick="window.location.href='${item.image_url_hd}'" style="cursor:pointer;"><img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/></div></th>`;
+                }
             });
             row.innerHTML = html + "</tr>";
         } else {
@@ -125,13 +140,17 @@ async function loadGallery(type, boxName) {
 // --- 3. LE CARROUSEL ---
 let currentPhotos = [], currentIndex = 0;
 async function openLightbox(reg, exact_date) {
-    const { data, error } = await sb.from('portfolio')
-        .select('image_url_hd')
-        .eq('registration', reg)
-        .eq('date', exact_date)
-        .order('id', { ascending: true });
+    let query = sb.from('portfolio').select('image_url_hd');
     
-    if (error || !data.length) return;
+    if (reg && reg !== 'null' && reg !== 'undefined' && reg.trim() !== '') {
+        query = query.eq('registration', reg);
+    } else {
+        query = query.ilike('date', `%${exact_date}%`);
+    }
+
+    const { data, error } = await query.order('id', { ascending: true });
+    
+    if (error || !data || !data.length) return;
     currentPhotos = data.map(p => p.image_url_hd);
     currentIndex = 0;
     renderLightbox();
