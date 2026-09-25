@@ -120,7 +120,6 @@ async function loadGallery(type, boxName) {
                 const safeDate = (exactDate || '').replace(/'/g, "\\'");
 
                 if (type === 'eclipse') {
-                    // Pour l'Éclipse uniquement : case avec le nom au-dessus de l'image
                     const titleText = item.registration || item.date || '';
                     html += `<th>
                         <div onclick="openLightbox('${safeReg}', '${safeDate}')" style="cursor:pointer;">
@@ -131,14 +130,12 @@ async function loadGallery(type, boxName) {
                         </div>
                     </th>`;
                 } else if (isCarouselCat) {
-                    // Pour le Spotting (avions) : image seule (sans texte)
                     html += `<th>
                         <div onclick="openLightbox('${safeReg}', '${safeDate}')" style="cursor:pointer;">
                             <img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/>
                         </div>
                     </th>`;
                 } else {
-                    // Pour Astro classique : image directe vers HD
                     html += `<th>
                         <div onclick="window.location.href='${item.image_url_hd}'" style="cursor:pointer;">
                             <img src="${item.image_url}" id="${id}" class="case1" onmouseover="onmouseover0('${id}')" onmouseout="onmouseout0('${id}')" style="object-fit:cover;" loading="lazy"/>
@@ -158,10 +155,13 @@ let currentPhotos = [], currentIndex = 0;
 async function openLightbox(reg, exact_date) {
     let query = sb.from('portfolio').select('image_url_hd');
     
+    // Le correctif est ici : on filtre par Registration ET par Date simultanément
     if (reg && reg !== 'null' && reg !== 'undefined' && reg.trim() !== '') {
         query = query.eq('registration', reg);
-    } else {
-        query = query.ilike('date', `%${exact_date}%`);
+    }
+    
+    if (exact_date && exact_date !== 'null' && exact_date !== 'undefined' && exact_date.trim() !== '') {
+        query = query.eq('date', exact_date);
     }
 
     const { data, error } = await query.order('id', { ascending: true });
